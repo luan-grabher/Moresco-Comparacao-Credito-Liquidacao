@@ -15,7 +15,10 @@ def comparar_creditos_com_liquidacoes(is_test=False):
     for data in total_diario_creditos:
         if data in total_diario_liquidacoes:
             diferenca = total_diario_creditos[data] - total_diario_liquidacoes[data]
-            diferencas[data] = {
+            
+            data_str = data.strftime('%d/%m/%Y')
+            
+            diferencas[data_str] = {
                 'credito': round(total_diario_creditos[data], 2),
                 'liquidacao': round(total_diario_liquidacoes[data], 2),
                 'diferenca': round(diferenca, 2)
