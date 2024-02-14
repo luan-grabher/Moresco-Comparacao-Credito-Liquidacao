@@ -1,4 +1,5 @@
 import pandas as pd
+from resultados import mostrar_resultados
 from user_gui import get_arquivos_do_usuario
 
 
@@ -21,6 +22,7 @@ def comparar_creditos_com_liquidacoes(is_test=False):
             }
             diferenca_total += diferenca
             
+    mostrar_resultados(diferencas, diferenca_total)
             
     return diferencas, diferenca_total
         
@@ -57,6 +59,3 @@ def get_totais_diarios(dataframe, coluna_data, coluna_valor):
 
 if __name__ == '__main__':
     diferencas, diferenca_total = comparar_creditos_com_liquidacoes(True)
-    
-    print(diferencas)
-    print(diferenca_total)
