@@ -2,40 +2,7 @@ from easygui import msgbox
 import pandas as pd
 from pcld_user_gui import get_arquivos_pcld_do_usuario
 from resultados import mostrar_resultados, mostrar_resultados_pcld
-from user_gui import get_arquivos_do_usuario
-
-
-def comparar_creditos_com_liquidacoes(is_test=False):
-    creditos, liquidacoes = get_arquivos_do_usuario(is_test)
-    if creditos.empty or liquidacoes.empty:
-        msgbox("Erro ao obter arquivos de créditos e liquidações.")
-    
-    total_diario_creditos = get_totais_diarios(creditos, 'Data', 'Valor')
-    total_diario_liquidacoes = get_totais_diarios(liquidacoes, 'Liquidação', 'Valor Pago')
-    
-    diferencas = {}
-    diferenca_total = 0
-    
-    for data in total_diario_creditos:
-        if data in total_diario_liquidacoes:
-            diferenca = total_diario_creditos[data] - total_diario_liquidacoes[data]
-            
-            if diferenca == 0:
-                continue
-            
-            data_str = data.strftime('%d/%m/%Y')
-            
-            diferencas[data_str] = {
-                'credito': round(total_diario_creditos[data], 2),
-                'liquidacao': round(total_diario_liquidacoes[data], 2),
-                'diferenca': round(diferenca, 2)
-            }
-            diferenca_total += diferenca
-            
-    mostrar_resultados(diferencas, diferenca_total)
-            
-    return diferencas, diferenca_total
-        
+from user_gui import get_arquivos_do_usuario        
         
 def normalize_valor(valor):
     if isinstance(valor, float):
@@ -152,6 +119,20 @@ def comparar_pcld_com_posicoes_por_dia(is_test=False):
     
     return diferencas
 
+def comparar_creditos_com_liquidacoes(is_test=False):
+    creditos, liquidacoes = get_arquivos_do_usuario(is_test)
+    if creditos.empty or liquidacoes.empty:
+        msgbox("Erro ao obter arquivos de créditos e liquidações.")    
+    
+    total_notas_creditos = get_valores_notas_fiscais(creditos, 'Nº Doc.', 'Valor')
+    total_notas_liquidacoes = get_valores_notas_fiscais(liquidacoes, 'Num. Titulo', 'Valor Pago')
+    
+    diferencas, notas_sem_diferenca = get_diferencas_entre_dataframes(total_notas_creditos, total_notas_liquidacoes, 'credito', 'liquidacao')
+            
+    mostrar_resultados(diferencas)
+    msgbox('Notas sem diferença (OK): ' + str(notas_sem_diferenca))
+            
+    return diferencas
 
 if __name__ == '__main__':
     print("Escolha uma opção:")
@@ -161,7 +142,7 @@ if __name__ == '__main__':
     print('Opção escolhida:', opcao)
     
     if opcao == '1':    
-        diferencas, diferenca_total = comparar_creditos_com_liquidacoes(True)
+        comparar_creditos_com_liquidacoes(True)
     elif opcao == '2':
         comparar_pcld_com_posicoes_por_dia(True)
     else:

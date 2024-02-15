@@ -47,7 +47,7 @@ def get_arquivos_do_usuario(is_test=False):
 def get_creditos(arquivo_creditos):
     try:
         #Data	Seqüência	Histórico	Contrapartida	Valor	Participante	Saldo	Filial	Usuário
-        cols = ['Data', 'Histórico', 'Valor', 'Usuário']
+        cols = ['Data', 'Histórico', 'Nº Doc.', 'Valor', 'Usuário']
         
         dataframe = pd.read_excel(arquivo_creditos, usecols=cols)
 
