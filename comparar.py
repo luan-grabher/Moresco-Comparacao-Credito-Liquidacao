@@ -1,5 +1,6 @@
 import pandas as pd
-from resultados import mostrar_resultados
+from pcld_user_gui import get_arquivos_pcld_do_usuario
+from resultados import mostrar_resultados, mostrar_resultados_pcld
 from user_gui import get_arquivos_do_usuario
 
 
@@ -15,6 +16,9 @@ def comparar_creditos_com_liquidacoes(is_test=False):
     for data in total_diario_creditos:
         if data in total_diario_liquidacoes:
             diferenca = total_diario_creditos[data] - total_diario_liquidacoes[data]
+            
+            if diferenca == 0:
+                continue
             
             data_str = data.strftime('%d/%m/%Y')
             
@@ -59,6 +63,45 @@ def get_totais_diarios(dataframe, coluna_data, coluna_valor):
         
     return totais_diarios
 
+def comparar_pcld_com_posicoes_por_dia(is_test=False):
+    pcld, posicoes_por_dia = get_arquivos_pcld_do_usuario(is_test)
+    
+    totais_pcld = get_totais_diarios(pcld, 'Liquidação', 'Valor do Titulo')
+    totais_posicoes_por_dia = get_totais_diarios(posicoes_por_dia, 'Liquidação', 'Valor Pago')
+    
+    diferencas = {}
+    
+    for data in totais_pcld:
+        if data in totais_posicoes_por_dia:
+            diferenca = totais_pcld[data] - totais_posicoes_por_dia[data]
+            if diferenca == 0:
+                continue
+            
+            data_str = data.strftime('%d/%m/%Y')
+            
+            diferencas[data_str] = {
+                'pcld': round(totais_pcld[data], 2),
+                'posicoes_por_dia': round(totais_posicoes_por_dia[data], 2),
+                'diferenca': round(diferenca, 2)
+            }
+            
+            
+    mostrar_resultados_pcld(diferencas)
+    
+    return diferencas
+
 
 if __name__ == '__main__':
-    diferencas, diferenca_total = comparar_creditos_com_liquidacoes(True)
+    print("Escolha uma opção:")
+    print("1 - Comparar créditos com liquidações")
+    print("2 - Comparar PCLD com Posições por Dia")
+    opcao = input()
+    print('Opção escolhida:', opcao)
+    
+    if opcao == '1':    
+        diferencas, diferenca_total = comparar_creditos_com_liquidacoes(True)
+    elif opcao == '2':
+        comparar_pcld_com_posicoes_por_dia(True)
+    else:
+        print("Opção inválida.")
+        exit()
