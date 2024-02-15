@@ -3,7 +3,9 @@ import pandas as pd
 from easygui import msgbox
 
 def renderizar_resultados(diferencas: dict, nome_arquivo_resultados: str, coluna_totals_1: str, coluna_totals_2: str, coluna_diferenca: str, coluna_index: str):
-    df = pd.DataFrame.from_dict(diferencas, orient='index', columns=[coluna_totals_1, coluna_totals_2, coluna_diferenca, 'datas ' + coluna_totals_1, 'datas ' + coluna_totals_2])
+    diferencas_ordenadas_pelo_index = dict(sorted(diferencas.items(), key=lambda item: item[0]))
+    
+    df = pd.DataFrame.from_dict(diferencas_ordenadas_pelo_index, orient='index', columns=[coluna_totals_1, coluna_totals_2, coluna_diferenca, 'datas ' + coluna_totals_1, 'datas ' + coluna_totals_2])
     df.index.name = coluna_index
 
     try:
