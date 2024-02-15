@@ -45,23 +45,31 @@ def get_arquivos_do_usuario(is_test=False):
     return creditos, liquidacoes
 
 def get_creditos(arquivo_creditos):
-    #Data	Seqüência	Histórico	Contrapartida	Valor	Participante	Saldo	Filial	Usuário
-    cols = ['Data', 'Seqüência', 'Histórico', 'Contrapartida', 'Valor', 'Participante', 'Saldo', 'Filial', 'Usuário']
-    
-    dataframe = pd.read_excel(arquivo_creditos, usecols=cols)
+    try:
+        #Data	Seqüência	Histórico	Contrapartida	Valor	Participante	Saldo	Filial	Usuário
+        cols = ['Data', 'Histórico', 'Valor', 'Usuário']
+        
+        dataframe = pd.read_excel(arquivo_creditos, usecols=cols)
 
-    return dataframe
+        return dataframe
+    except Exception as e:
+        msgbox("Erro ao ler arquivo de créditos. Por favor, feche o arquivo se ele estiver aberto e tente novamente.")
+        return pd.DataFrame()
 
 def get_liquidacoes(arquivos_liquidacoes):
-    #Base	Num. Titulo	Emissão	Codigo Cliente	Nome Cliente	Banco	Cobrança	 Valor Titulo 	 Valor em Aberto 	 Valor Pago 	Vencimento	Liquidação
-    cols = ['Base', 'Num. Titulo', 'Emissão', 'Codigo Cliente', 'Nome Cliente', 'Banco', 'Cobrança', 'Valor Titulo', 'Valor em Aberto', 'Valor Pago', 'Vencimento', 'Liquidação']
-    
-    dataframe = pd.DataFrame()
-    
-    for arquivo in arquivos_liquidacoes:
-        dataframe = pd.concat([dataframe, pd.read_excel(arquivo, usecols=cols)])
-    
-    return dataframe
+    try:
+        #Base	Num. Titulo	Emissão	Codigo Cliente	Nome Cliente	Banco	Cobrança	 Valor Titulo 	 Valor em Aberto 	 Valor Pago 	Vencimento	Liquidação
+        cols = ['Base', 'Num. Titulo', 'Emissão', 'Codigo Cliente', 'Nome Cliente', 'Banco', 'Cobrança', 'Valor Titulo', 'Valor em Aberto', 'Valor Pago', 'Vencimento', 'Liquidação']
+        
+        dataframe = pd.DataFrame()
+        
+        for arquivo in arquivos_liquidacoes:
+            dataframe = pd.concat([dataframe, pd.read_excel(arquivo, usecols=cols)])
+        
+        return dataframe
+    except Exception as e:
+        msgbox("Erro ao ler arquivo de liquidações. Por favor, feche o arquivo se ele estiver aberto e tente novamente.")
+        return pd.DataFrame()
 
 if __name__ == "__main__":
     creditos, liquidacoes = get_arquivos_do_usuario(is_test=True)

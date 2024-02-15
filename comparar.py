@@ -1,3 +1,4 @@
+from easygui import msgbox
 import pandas as pd
 from pcld_user_gui import get_arquivos_pcld_do_usuario
 from resultados import mostrar_resultados, mostrar_resultados_pcld
@@ -6,6 +7,8 @@ from user_gui import get_arquivos_do_usuario
 
 def comparar_creditos_com_liquidacoes(is_test=False):
     creditos, liquidacoes = get_arquivos_do_usuario(is_test)
+    if creditos.empty or liquidacoes.empty:
+        msgbox("Erro ao obter arquivos de créditos e liquidações.")
     
     total_diario_creditos = get_totais_diarios(creditos, 'Data', 'Valor')
     total_diario_liquidacoes = get_totais_diarios(liquidacoes, 'Liquidação', 'Valor Pago')
@@ -65,6 +68,8 @@ def get_totais_diarios(dataframe, coluna_data, coluna_valor):
 
 def comparar_pcld_com_posicoes_por_dia(is_test=False):
     pcld, posicoes_por_dia = get_arquivos_pcld_do_usuario(is_test)
+    if pcld.empty or posicoes_por_dia.empty:
+        msgbox("Erro ao obter arquivos de PCLD e Posições por Dia.")
     
     totais_pcld = get_totais_diarios(pcld, 'Liquidação', 'Valor do Titulo')
     totais_posicoes_por_dia = get_totais_diarios(posicoes_por_dia, 'Liquidação', 'Valor Pago')
